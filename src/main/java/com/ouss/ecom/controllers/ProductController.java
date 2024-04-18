@@ -2,6 +2,8 @@ package com.ouss.ecom.controllers;
 
 import com.ouss.ecom.entities.Product;
 import com.ouss.ecom.services.ProductService;
+import com.ouss.ecom.utils.SecurityUtil;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,8 +21,9 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@RequestBody Product product) {
+    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
         Product createdProduct = productService.createProduct(product);
+        createdProduct.setUser(null);
         return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
     }
 

@@ -5,6 +5,8 @@ import com.ouss.ecom.config.JwtService;
 import com.ouss.ecom.dao.RoleRepo;
 import com.ouss.ecom.dao.UserRepo;
 import com.ouss.ecom.entities.AppUser;
+import com.ouss.ecom.errors.CustomException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -25,54 +27,41 @@ public class AuthenticationService {
 
   private final UserRepo repository;
   private final RoleRepo roleRepositor;
-//  private final TokenRepository tokenRepository;
+  //  private final TokenRepository tokenRepository;
   private final PasswordEncoder passwordEncoder;
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
-  public AuthenticationResponse register(RegisterRequest request) {
-
-    var user = AppUser.builder()
-        .name(request.getName())
-        .email(request.getEmail())
-        .password(passwordEncoder.encode(request.getPassword()))
-//            change it when y finish the project to be for USER
-        .role(roleRepositor.findByRole("MANAGER"))
-        .build();
-    repository.save(user);
-    var jwtToken = jwtService.generateToken(user);
-//    var refreshToken = jwtService.generateRefreshToken(user);
-//    saveUserToken(savedUser, jwtToken);
-    return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-//            .refreshToken(refreshToken)
-        .build();
+  public String register(AppUser request) {
+    var existingUser = repository.findByEmail(request.getEmail());
+    if (existingUser.isPresent()) {
+      throw new CustomException.BadRequestException("Email already exists");
+    }
+    request.setPassword(passwordEncoder.encode(request.getPassword()));
+    request.setRole(roleRepositor.findByRole("MANAGER"));
+    repository.save(request);
+    return "User registered successfully";
   }
-
-  public AuthenticationResponse login(AuthenticationRequest request) {
-
-    var user = repository.findByEmail(request.getEmail())
-        .orElseThrow();
-    System.out.println(user);
+  public String login(AuthenticationRequest request ,HttpServletResponse response) {
+    AppUser user = repository.findByEmail(request.getEmail())
+            .orElseThrow(() -> new CustomException.UnauthorizedException("Invalid credentials"));
+    if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+      throw new CustomException.UnauthenticatedException("Invalid credentials");
+    }
     var jwtToken = jwtService.generateToken(user);
-//    try{
-//      authenticationManager.authenticate(
-//              new UsernamePasswordAuthenticationToken(
-//                      user.getEmail(),
-//                      user.getPassword(),
-//                      user.getAuthorities()
-//              )
-//      );
-//    }catch (Exception e){
-//      System.out.println(e.toString());
-//    }
+    response.addCookie(createCookie(jwtToken, 24*60*60));
 //    var refreshToken = jwtService.generateRefreshToken(user);
 //    revokeAllUserTokens(user);
 //    saveUserToken(user, jwtToken);
-    return AuthenticationResponse.builder()
-        .accessToken(jwtToken)
-//            .refreshToken(refreshToken)
-        .build();
+    return "User logged in successfully";
+  }
+  private Cookie createCookie(String value, int maxAge) {
+    Cookie cookie = new Cookie("token", value);
+    cookie.setPath("/");
+    cookie.setHttpOnly(true);
+    cookie.setSecure(true);
+    cookie.setMaxAge(24*60* 60);
+    return cookie;
   }
 
 //  private void saveUserToken(User user, String jwtToken) {
@@ -124,4 +113,5 @@ public class AuthenticationService {
 //      }
 //    }
 //  }
+
 }

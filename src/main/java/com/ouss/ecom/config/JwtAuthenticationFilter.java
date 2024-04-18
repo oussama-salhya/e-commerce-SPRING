@@ -3,6 +3,7 @@ package com.ouss.ecom.config;
 //import ma.fsts.springboot3withjwt.security.token.TokenRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,15 +36,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
       filterChain.doFilter(request, response);
       return;
     }
-    final String authHeader = request.getHeader("Authorization");
-    final String jwt;
-    final String userEmail;
-    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
-      filterChain.doFilter(request, response);
-      return;
+//    final String authHeader = request.getHeader("Authorization");
+    String jwt = null;
+    String userEmail = null;
+    // Get cookies from the request
+    Cookie[] cookies = request.getCookies();
+    if (cookies != null) {
+      for (Cookie cookie : cookies) {
+        if (cookie.getName().equals("token")) {
+          jwt = cookie.getValue();
+          userEmail = jwtService.extractUsername(jwt);
+          break;
+        }
+      }
     }
-    jwt = authHeader.substring(7);
-    userEmail = jwtService.extractUsername(jwt);
+//    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
+//      filterChain.doFilter(request, response);
+//      return;
+//    }
+//    jwt = authHeader.substring(7);
+//    userEmail = jwtService.extractUsername(jwt);
     if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
       UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
 //      var isTokenValid = tokenRepository.findByToken(jwt)

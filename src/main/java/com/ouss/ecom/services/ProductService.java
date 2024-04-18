@@ -2,8 +2,10 @@ package com.ouss.ecom.services;
 
 import com.ouss.ecom.dao.ProductRepo;
 import com.ouss.ecom.dao.ProductRepo;
+import com.ouss.ecom.entities.AppUser;
 import com.ouss.ecom.entities.Product;
 import com.ouss.ecom.errors.CustomException;
+import com.ouss.ecom.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +22,8 @@ public class ProductService {
 
     public Product createProduct(Product product) {
         // Add your business logic here
+        AppUser user = SecurityUtil.getAuthenticatedUser();
+        product.setUser(user);
         return ProductRepo.save(product);
     }
 

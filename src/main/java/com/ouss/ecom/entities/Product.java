@@ -1,6 +1,9 @@
 package com.ouss.ecom.entities;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.NoArgsConstructor;
@@ -8,7 +11,6 @@ import lombok.RequiredArgsConstructor;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import javax.validation.constraints.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,11 +39,11 @@ public class Product {
     @Builder.Default
     private String image = "/uploads/example.jpeg";
 
-    @NotBlank(message = "Please provide product category")
+    @NotNull(message = "Please provide product category")
     @Enumerated(EnumType.STRING)
     private Category category;
 
-    @NotBlank(message = "Please provide company")
+    @NotNull(message = "Please provide company")
     @Enumerated(EnumType.STRING)
     private Company company;
 
