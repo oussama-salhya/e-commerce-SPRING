@@ -32,14 +32,14 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
-  public String register(AppUser request) {
-    var existingUser = repository.findByEmail(request.getEmail());
+  public String register(AppUser user) {
+    var existingUser = repository.findByEmail(user.getEmail());
     if (existingUser.isPresent()) {
       throw new CustomException.BadRequestException("Email already exists");
     }
-    request.setPassword(passwordEncoder.encode(request.getPassword()));
-    request.setRole(roleRepositor.findByRole("MANAGER"));
-    repository.save(request);
+    user.setPassword(passwordEncoder.encode(user.getPassword()));
+    if (user.getRole() == null) user.setRole(roleRepositor.findByRole("USER"));
+    repository.save(user);
     return "User registered successfully";
   }
   public String login(AuthenticationRequest request ,HttpServletResponse response) {
@@ -55,6 +55,7 @@ public class AuthenticationService {
 //    saveUserToken(user, jwtToken);
     return "User logged in successfully";
   }
+
   private Cookie createCookie(String value, int maxAge) {
     Cookie cookie = new Cookie("token", value);
     cookie.setPath("/");

@@ -36,7 +36,7 @@ public class AppUser implements UserDetails {
     private String email;
 
     @NotBlank(message = "Please provide password")
-    @Size(min = 6, message = "Password must be at least 6 characters long")
+    @Size(min = 5, message = "Password must be at least 6 characters long")
     private String password;
 
     @ManyToOne(fetch = FetchType.EAGER)

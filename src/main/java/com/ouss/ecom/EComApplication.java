@@ -1,10 +1,11 @@
 package com.ouss.ecom;
 
+import com.ouss.ecom.auth.AuthenticationService;
+import com.ouss.ecom.dao.CategoryRepo;
+import com.ouss.ecom.dao.CompanyRepo;
 import com.ouss.ecom.dao.RoleRepo;
 import com.ouss.ecom.dao.UserRepo;
-import com.ouss.ecom.entities.AppUser;
-import com.ouss.ecom.entities.Product;
-import com.ouss.ecom.entities.Role;
+import com.ouss.ecom.entities.*;
 import com.ouss.ecom.services.ProductService;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -25,11 +26,44 @@ public class EComApplication {
     @Autowired
     private UserRepo userRepo;
     @Autowired
+    private final AuthenticationService userService;
+    @Autowired
     private ProductService productService;
     @Autowired
     private RoleRepo roleRepo;
+    @Autowired
+    private CategoryRepo categoryRepo;
+    @Autowired
+    private CompanyRepo companyRepo;
     @PostConstruct
     public void init(){
+
+    if(roleRepo.findByRole("ADMIN") == null){
+        Role role = Role.builder()
+                .role("ADMIN")
+                .autorities(Set.of(Role.Authoritie.CREATE, Role.Authoritie.READ, Role.Authoritie.UPDATE, Role.Authoritie.DELETE))
+                .build();
+        roleRepo.save(role);
+    }
+    if (userRepo.findByEmail("admin@gmail.com").isEmpty()){
+        AppUser user = new AppUser();
+        user.setName("admin");
+        user.setEmail("admin@gmail.com");
+        user.setPassword("admin");
+        user.setRole(roleRepo.findByRole("ADMIN"));
+        userService.register(user);
+    }
+    if(companyRepo.findByName("IKEA") == null){
+        Company company = new Company();
+        company.setName("IKEA");
+        companyRepo.save(company);
+    }
+    if (categoryRepo.findByName("OFFICE") == null){
+        Category category = new Category();
+        category.setName("OFFICE");
+        categoryRepo.save(category);
+    }
+
 //        Role role = Role.builder()
 //                .role("ADMIN")
 //                .autorities(Set.of(Role.Authoritie.CREATE, Role.Authoritie.READ, Role.Authoritie.UPDATE, Role.Authoritie.DELETE))

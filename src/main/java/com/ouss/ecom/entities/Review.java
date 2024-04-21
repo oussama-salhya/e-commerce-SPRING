@@ -1,5 +1,6 @@
 package com.ouss.ecom.entities;
 
+import com.ouss.ecom.dao.ProductRepo;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
@@ -47,4 +48,5 @@ public class Review {
 
     @UpdateTimestamp
     private LocalDateTime updatedAt;
+
 }

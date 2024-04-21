@@ -9,4 +9,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.io.Serializable;
 
 public interface OrderItemRepo extends JpaRepository<OrderItem, OrderItemKey> {
+    OrderItem findByOrderAndProduct(Order savedOrder, Product dbProduct);
 }

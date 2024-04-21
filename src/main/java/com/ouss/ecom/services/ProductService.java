@@ -1,8 +1,12 @@
 package com.ouss.ecom.services;
 
+import com.ouss.ecom.dao.CategoryRepo;
+import com.ouss.ecom.dao.CompanyRepo;
 import com.ouss.ecom.dao.ProductRepo;
 import com.ouss.ecom.dao.ProductRepo;
 import com.ouss.ecom.entities.AppUser;
+import com.ouss.ecom.entities.Category;
+import com.ouss.ecom.entities.Company;
 import com.ouss.ecom.entities.Product;
 import com.ouss.ecom.errors.CustomException;
 import com.ouss.ecom.utils.SecurityUtil;
@@ -14,50 +18,58 @@ import java.util.Optional;
 
 @Service
 public class ProductService {
-    private final ProductRepo ProductRepo;
+    private final ProductRepo productRepo;
+    private final CategoryRepo categoryRepo;
+    private final CompanyRepo companyRepo;
 
-    public ProductService(ProductRepo ProductRepo) {
-        this.ProductRepo = ProductRepo;
+    public ProductService(ProductRepo productRepo, CategoryRepo categoryRepo, CompanyRepo companyRepo) {
+        this.productRepo = productRepo;
+        this.categoryRepo = categoryRepo;
+        this.companyRepo = companyRepo;
     }
-
     public Product createProduct(Product product) {
         // Add your business logic here
         AppUser user = SecurityUtil.getAuthenticatedUser();
         product.setUser(user);
-        return ProductRepo.save(product);
+        // Fetch the Category and Company entities from the database
+        Category category = categoryRepo.findByName(product.getCategory().getName());
+        Company company = companyRepo.findByName(product.getCompany().getName());
+
+        // Set the fetched entities to the product
+        product.setCategory(category);
+        product.setCompany(company);
+        return productRepo.save(product);
     }
 
     public List<Product> getAllProducts() {
         // Add your business logic here
-        return ProductRepo.findAll();
+        List<Product> products = productRepo.findAll();
+        return products;
     }
 
     public Product getSingleProduct(Long id) {
         // Add your business logic here
-        Optional<Product> product = ProductRepo.findById(id);
+        Optional<Product> product = productRepo.findById(id);
         if (!product.isPresent()) {
             throw new CustomException.NotFoundException("No product with id : " + id);
         }
         return product.get();
     }
 
-    public Product updateProduct(Long id, Product product) {
-        // Add your business logic here
-        Optional<Product> existingProduct = ProductRepo.findById(id);
+    public Product updateProduct(Product product, Long id) {
+        Optional<Product> existingProduct = productRepo.findById(id);
         if (!existingProduct.isPresent()) {
-            throw new CustomException.NotFoundException("No product with id : " + id);
+            throw new CustomException.NotFoundException("No product with id : " + product.getId());
         }
-        product.setId(id);
-        return ProductRepo.save(product);
+        return productRepo.save(product);
     }
 
     public void deleteProduct(Long id) {
-        // Add your business logic here
-        Optional<Product> existingProduct = ProductRepo.findById(id);
+        Optional<Product> existingProduct = productRepo.findById(id);
         if (!existingProduct.isPresent()) {
             throw new CustomException.NotFoundException("No product with id : " + id);
         }
-        ProductRepo.deleteById(id);
+        productRepo.deleteById(id);
     }
 
     public String uploadImage(MultipartFile image) {

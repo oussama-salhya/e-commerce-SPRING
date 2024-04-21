@@ -1,7 +1,10 @@
 package com.ouss.ecom.controllers;
 
+import com.ouss.ecom.dto.ProductDTO;
+import com.ouss.ecom.dto.ReviewDTO;
 import com.ouss.ecom.entities.Product;
 import com.ouss.ecom.services.ProductService;
+import com.ouss.ecom.services.ReviewService;
 import com.ouss.ecom.utils.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,34 +18,39 @@ import java.util.List;
 @RequestMapping("/products")
 public class ProductController {
     private final ProductService productService;
+    private final ReviewService reviewService;
 
-    public ProductController(ProductService productService) {
+    public ProductController(ProductService productService, ReviewService reviewService) {
         this.productService = productService;
+        this.reviewService = reviewService;
     }
 
     @PostMapping
-    public ResponseEntity<Product> createProduct(@Valid @RequestBody Product product) {
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody Product product) {
         Product createdProduct = productService.createProduct(product);
-        createdProduct.setUser(null);
-        return new ResponseEntity<>(createdProduct, HttpStatus.CREATED);
+        return new ResponseEntity<>(ProductDTO.toProductDTO(createdProduct), HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Product>> getAllProducts() {
+    public ResponseEntity<List<ProductDTO>> getAllProducts() {
         List<Product> products = productService.getAllProducts();
-        return new ResponseEntity<>(products, HttpStatus.OK);
+        return new ResponseEntity<>(ProductDTO.toProductDTOList(products), HttpStatus.OK);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Product> getSingleProduct(@PathVariable Long id) {
+    public ResponseEntity<ProductDTO> getSingleProduct(@PathVariable Long id) {
         Product product = productService.getSingleProduct(id);
-        return new ResponseEntity<>(product, HttpStatus.OK);
+        return new ResponseEntity<>(ProductDTO.toProductDTO(product), HttpStatus.OK);
+    }
+    @GetMapping("/{id}/reviews")
+    public ResponseEntity<List<ReviewDTO>> getSingleProductReviews(@PathVariable Long id) {
+        return ResponseEntity.ok(reviewService.getSingleProductReviews(id));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Product> updateProduct(@PathVariable Long id, @RequestBody Product product) {
-        Product updatedProduct = productService.updateProduct(id, product);
-        return new ResponseEntity<>(updatedProduct, HttpStatus.OK);
+    @PatchMapping("/{id}")
+    public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,@Valid @RequestBody Product product) {
+        Product updatedProduct = productService.updateProduct(product,id);
+        return new ResponseEntity<>(ProductDTO.toProductDTO(updatedProduct), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")

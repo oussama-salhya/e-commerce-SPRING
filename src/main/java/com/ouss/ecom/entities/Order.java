@@ -11,6 +11,7 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Entity
@@ -32,13 +33,12 @@ public class Order {
 
     @NotNull(message = "Please provide subtotal")
     private Double subtotal;
-
     @NotNull(message = "Please provide total")
     private Double total;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "order_id")
-    private List<OrderItem> orderItems;
+    private List<OrderItem> orderItems = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
     private Status status = Status.PENDING;
@@ -47,7 +47,7 @@ public class Order {
     @JoinColumn(name = "user_id", nullable = false)
     private AppUser user;
 
-    @NotBlank(message = "Please provide client secret")
+//    @NotBlank(message = "Please provide client secret")
     private String clientSecret;
 
     private String paymentIntentId;
