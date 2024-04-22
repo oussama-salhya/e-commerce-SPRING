@@ -27,7 +27,7 @@ public class ReviewService {
 
     public ReviewDTO createReview(Review review, Long productId) {
         Product product = productRepo.findById(productId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "No product with id " + productId));
+                .orElseThrow(() -> new CustomException.NotFoundException("No product with id " + productId));
 
         AppUser user = SecurityUtil.getAuthenticatedUser();
 

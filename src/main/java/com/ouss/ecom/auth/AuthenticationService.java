@@ -56,7 +56,7 @@ public class AuthenticationService {
     return "User logged in successfully";
   }
 
-  private Cookie createCookie(String value, int maxAge) {
+  public Cookie createCookie(String value, int maxAge) {
     Cookie cookie = new Cookie("token", value);
     cookie.setPath("/");
     cookie.setHttpOnly(true);

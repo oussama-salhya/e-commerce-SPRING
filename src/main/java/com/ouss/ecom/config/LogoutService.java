@@ -22,7 +22,7 @@ public class LogoutService implements LogoutHandler {
       HttpServletResponse response,
       Authentication authentication
   ) {
-    //    final String authHeader = request.getHeader("Authorization");
+//        final String authHeader = request.getHeader("Authorization");
 //    final String jwt;
 //    jwt = authHeader.substring(7);
 //    var storedToken = tokenRepository.findByToken(jwt)

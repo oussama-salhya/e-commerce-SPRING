@@ -45,6 +45,13 @@ public class EComApplication {
                 .build();
         roleRepo.save(role);
     }
+    if(roleRepo.findByRole("USER") == null){
+        Role role = Role.builder()
+                .role("USER")
+                .autorities(Set.of(Role.Authoritie.CREATE, Role.Authoritie.READ, Role.Authoritie.UPDATE, Role.Authoritie.DELETE))
+                .build();
+        roleRepo.save(role);
+    }
     if (userRepo.findByEmail("admin@gmail.com").isEmpty()){
         AppUser user = new AppUser();
         user.setName("admin");
