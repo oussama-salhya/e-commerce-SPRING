@@ -56,21 +56,36 @@ public class UserService {
         return UserDTO.toUserDTO(currentUser);
     }
 
-    public UserDTO updateUser(UserDTO updatedUser, HttpServletResponse response) {
-        if (updatedUser.getEmail() == null || updatedUser.getName() == null) {
-            throw new CustomException.BadRequestException("Please provide all values");
-        }
-        AppUser currentUser = SecurityUtil.getAuthenticatedUser();
-        currentUser.setEmail(updatedUser.getEmail());
-        currentUser.setName(updatedUser.getName());
-        currentUser = userRepo.save(currentUser);
-        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
-                currentUser, null, currentUser.getAuthorities());
-        SecurityContextHolder.getContext().setAuthentication(authentication);
-        var jwtToken = jwtService.generateToken(currentUser);
-        response.addCookie(authenticationService.createCookie(jwtToken, 24*60*60));
-        return UserDTO.toUserDTO(currentUser);
+//    public UserDTO updateUser(UserDTO updatedUser, HttpServletResponse response) {
+//        if (updatedUser.getEmail() == null || updatedUser.getName() == null) {
+//            throw new CustomException.BadRequestException("Please provide all values");
+//        }
+//        AppUser currentUser = SecurityUtil.getAuthenticatedUser();
+//        currentUser.setEmail(updatedUser.getEmail());
+//        currentUser.setName(updatedUser.getName());
+//        currentUser = userRepo.save(currentUser);
+//        UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+//                currentUser, null, currentUser.getAuthorities());
+//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        var jwtToken = jwtService.generateToken(currentUser);
+//        response.addCookie(authenticationService.createCookie(jwtToken));
+//        return UserDTO.toUserDTO(currentUser);
+//    }
+public UserDTO updateUser(UserDTO updatedUser, HttpServletResponse response) {
+    if (updatedUser.getEmail() == null || updatedUser.getName() == null) {
+        throw new CustomException.BadRequestException("Please provide all values");
     }
+    AppUser currentUser = SecurityUtil.getAuthenticatedUser();
+    currentUser.setEmail(updatedUser.getEmail());
+    currentUser.setName(updatedUser.getName());
+    currentUser = userRepo.save(currentUser);
+    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
+            currentUser, null, currentUser.getAuthorities());
+    SecurityContextHolder.getContext().setAuthentication(authentication);
+    var jwtToken = jwtService.generateToken(currentUser);
+    response.addCookie(authenticationService.createCookie(jwtToken));
+    return UserDTO.toUserDTO(currentUser);
+}
     public void changePassword(ChangePasswordRequest request) {
 
         AppUser user = SecurityUtil.getAuthenticatedUser();

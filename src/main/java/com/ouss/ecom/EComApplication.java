@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
 import java.util.Set;
@@ -35,6 +36,8 @@ public class EComApplication {
     private CategoryRepo categoryRepo;
     @Autowired
     private CompanyRepo companyRepo;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     @PostConstruct
     public void init(){
 
@@ -56,7 +59,7 @@ public class EComApplication {
         AppUser user = new AppUser();
         user.setName("admin");
         user.setEmail("admin@gmail.com");
-        user.setPassword("admin");
+        user.setPassword(passwordEncoder.encode("admin"));
         user.setRole(roleRepo.findByRole("ADMIN"));
         userService.register(user);
     }
@@ -68,6 +71,16 @@ public class EComApplication {
     if (categoryRepo.findByName("OFFICE") == null){
         Category category = new Category();
         category.setName("OFFICE");
+        categoryRepo.save(category);
+    }
+    if(companyRepo.findByName("NIKE") == null){
+        Company company = new Company();
+        company.setName("NIKE");
+        companyRepo.save(company);
+    }
+    if (categoryRepo.findByName("SPORT") == null){
+        Category category = new Category();
+        category.setName("SPORT");
         categoryRepo.save(category);
     }
 

@@ -10,6 +10,7 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -24,6 +25,12 @@ import java.util.Set;
 @Service
 @RequiredArgsConstructor
 public class AuthenticationService {
+  @Value("${application.security.jwt.secret-key}")
+  private String secretKey;
+  @Value("${application.security.jwt.expiration}")
+  public  int jwtExpiration;
+  @Value("${application.security.jwt.refresh-token.expiration}")
+  private long refreshExpiration;
 
   private final UserRepo repository;
   private final RoleRepo roleRepositor;
@@ -42,6 +49,7 @@ public class AuthenticationService {
     repository.save(user);
     return "User registered successfully";
   }
+
   public String login(AuthenticationRequest request ,HttpServletResponse response) {
     AppUser user = repository.findByEmail(request.getEmail())
             .orElseThrow(() -> new CustomException.UnauthorizedException("Invalid credentials"));
@@ -49,19 +57,19 @@ public class AuthenticationService {
       throw new CustomException.UnauthenticatedException("Invalid credentials");
     }
     var jwtToken = jwtService.generateToken(user);
-    response.addCookie(createCookie(jwtToken, 24*60*60));
+    response.addCookie(createCookie(jwtToken));
 //    var refreshToken = jwtService.generateRefreshToken(user);
 //    revokeAllUserTokens(user);
 //    saveUserToken(user, jwtToken);
     return "User logged in successfully";
   }
 
-  public Cookie createCookie(String value, int maxAge) {
+  public Cookie createCookie(String value) {
     Cookie cookie = new Cookie("token", value);
     cookie.setPath("/");
     cookie.setHttpOnly(true);
     cookie.setSecure(true);
-    cookie.setMaxAge(24*60* 60);
+    cookie.setMaxAge(jwtExpiration);
     return cookie;
   }
 

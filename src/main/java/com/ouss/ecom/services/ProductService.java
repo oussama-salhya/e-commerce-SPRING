@@ -16,6 +16,9 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 @Service
 public class ProductService {
     private final ProductRepo productRepo;
@@ -41,11 +44,14 @@ public class ProductService {
         return productRepo.save(product);
     }
 
-    public List<Product> getAllProducts() {
-        // Add your business logic here
-        List<Product> products = productRepo.findAll();
-        return products;
+    public Page<Product> getAllProducts(Specification<Product> spec, Pageable pageable) {
+        return productRepo.findAll(spec, pageable);
     }
+//    public List<Product> getAllProducts() {
+//        // Add your business logic here
+//        List<Product> products = productRepo.findAll();
+//        return products;
+//    }
 
     public Product getSingleProduct(Long id) {
         // Add your business logic here

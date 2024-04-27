@@ -1,5 +1,6 @@
 package com.ouss.ecom.errors;
 
+import jakarta.validation.ConstraintViolationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -91,11 +92,11 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         return new ResponseEntity<>(customError, HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public ResponseEntity<CustomError> handleConstraintViolationException(ConstraintViolationException ex) {
-//        CustomError customError = new CustomError();
-//        customError.setStatusCode(HttpStatus.BAD_REQUEST.value());
-//        customError.setMessage(ex.getConstraintViolations().iterator().next().getMessage());
-//        return new ResponseEntity<>(customError, HttpStatus.BAD_REQUEST);
-//    }
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<CustomError> handleConstraintViolationException(ConstraintViolationException ex) {
+        CustomError customError = new CustomError();
+        customError.setStatusCode(HttpStatus.BAD_REQUEST.value());
+        customError.setMessage(ex.getConstraintViolations().iterator().next().getMessage());
+        return new ResponseEntity<>(customError, HttpStatus.BAD_REQUEST);
+    }
 }

@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @lombok.Data
@@ -40,11 +41,11 @@ public class Product {
     private String image = "/uploads/example.jpeg";
 
     @ManyToOne
-    @NotNull(message = "Please provide product category")
+    @NotNull(message = "Please provide a valid product category")
     private Category category;
 
     @ManyToOne
-    @NotNull(message = "Please provide company")
+    @NotNull(message = "Please provide a valid company")
     private Company company;
 
 
@@ -79,7 +80,24 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-
+    @PrePersist
+    @PreUpdate
+    public void toLowerCase() {
+        if (colors != null) {
+            colors = colors.stream()
+                    .map(String::toLowerCase)
+                    .collect(Collectors.toList());
+        }
+        if (company != null) {
+            company.setName(company.getName().toLowerCase());
+        }
+        if (category != null) {
+            category.setName(category.getName().toLowerCase());
+        }
+        if (name != null) {
+            name = name.toLowerCase();
+        }
+    }
 
 
 }
