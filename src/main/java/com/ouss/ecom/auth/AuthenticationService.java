@@ -69,7 +69,7 @@ public class AuthenticationService {
     cookie.setPath("/");
     cookie.setHttpOnly(true);
     cookie.setSecure(true);
-    cookie.setMaxAge(jwtExpiration);
+    cookie.setMaxAge(jwtExpiration/1000);
     return cookie;
   }
 

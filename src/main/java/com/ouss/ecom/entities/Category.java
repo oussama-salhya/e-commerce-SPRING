@@ -1,9 +1,6 @@
 package com.ouss.ecom.entities;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -11,6 +8,10 @@ import lombok.Data;
 @Entity
 public class Category {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
     @NotBlank(message = "Please provide category name")
+    @Column(unique = true)
     private String name;
 }

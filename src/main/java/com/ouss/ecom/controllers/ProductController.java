@@ -52,7 +52,7 @@ public class ProductController {
             @RequestParam(required = false) String color,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "price,desc") String[] sort) {
+            @RequestParam(defaultValue = "price,desc") String sort) {
 
         Specification<Product> spec = Specification.where(null);
 
@@ -90,8 +90,8 @@ public class ProductController {
         List<Sort.Order> orders = new ArrayList<>();
         List<String> validProperties = Arrays.asList("name", "price", "averageRating");
 
-        for (String part : sort) {
-            String[] parts = part.split(",");
+//        for (String part : sort) {
+            String[] parts = sort.split(",");
             if (validProperties.contains(parts[0])) {
                 if (parts.length >= 2) {
                     orders.add(parts[1].equalsIgnoreCase("asc") ? Sort.Order.asc(parts[0]) : Sort.Order.desc(parts[0]));
@@ -100,7 +100,7 @@ public class ProductController {
                     orders.add(Sort.Order.desc(parts[0]));
                 }
             }
-        }
+//        }
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         Page<Product> products = productService.getAllProducts(spec, pageable);
         Page<ProductDTO> productDTOs = products.map(ProductDTO::toProductDTO);

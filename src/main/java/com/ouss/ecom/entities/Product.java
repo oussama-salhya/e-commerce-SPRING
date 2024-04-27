@@ -80,24 +80,6 @@ public class Product {
     @UpdateTimestamp
     private LocalDateTime updatedAt;
 
-    @PrePersist
-    @PreUpdate
-    public void toLowerCase() {
-        if (colors != null) {
-            colors = colors.stream()
-                    .map(String::toLowerCase)
-                    .collect(Collectors.toList());
-        }
-        if (company != null) {
-            company.setName(company.getName().toLowerCase());
-        }
-        if (category != null) {
-            category.setName(category.getName().toLowerCase());
-        }
-        if (name != null) {
-            name = name.toLowerCase();
-        }
-    }
 
 
 }

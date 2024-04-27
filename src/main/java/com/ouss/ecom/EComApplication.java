@@ -27,8 +27,6 @@ public class EComApplication {
     @Autowired
     private UserRepo userRepo;
     @Autowired
-    private final AuthenticationService userService;
-    @Autowired
     private ProductService productService;
     @Autowired
     private RoleRepo roleRepo;
@@ -61,26 +59,26 @@ public class EComApplication {
         user.setEmail("admin@gmail.com");
         user.setPassword(passwordEncoder.encode("admin"));
         user.setRole(roleRepo.findByRole("ADMIN"));
-        userService.register(user);
+        userRepo.save(user);
     }
-    if(companyRepo.findByName("IKEA") == null){
+    if(companyRepo.findByName("ikea") == null){
         Company company = new Company();
-        company.setName("IKEA");
+        company.setName("ikea");
         companyRepo.save(company);
     }
-    if (categoryRepo.findByName("OFFICE") == null){
+    if (categoryRepo.findByName("office") == null){
         Category category = new Category();
-        category.setName("OFFICE");
+        category.setName("office");
         categoryRepo.save(category);
     }
-    if(companyRepo.findByName("NIKE") == null){
+    if(companyRepo.findByName("nike") == null){
         Company company = new Company();
-        company.setName("NIKE");
+        company.setName("nike");
         companyRepo.save(company);
     }
-    if (categoryRepo.findByName("SPORT") == null){
+    if (categoryRepo.findByName("sport") == null){
         Category category = new Category();
-        category.setName("SPORT");
+        category.setName("sport");
         categoryRepo.save(category);
     }
 
