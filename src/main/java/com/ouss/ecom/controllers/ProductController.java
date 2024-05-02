@@ -10,6 +10,7 @@ import com.ouss.ecom.utils.SecurityUtil;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -35,8 +36,9 @@ public class ProductController {
     }
 
     @PostMapping
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody Product product) {
-        Product createdProduct = productService.createProduct(product);
+    @PreAuthorize("hasRole('ADMIN')")
+    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody Product product, @RequestParam(required = false) MultipartFile image){
+        Product createdProduct = productService.createProduct(product,image);
         return new ResponseEntity<>(ProductDTO.toProductDTO(createdProduct), HttpStatus.CREATED);
     }
 
@@ -90,7 +92,6 @@ public class ProductController {
         List<Sort.Order> orders = new ArrayList<>();
         List<String> validProperties = Arrays.asList("name", "price", "averageRating");
 
-//        for (String part : sort) {
             String[] parts = sort.split(",");
             if (validProperties.contains(parts[0])) {
                 if (parts.length >= 2) {
@@ -100,7 +101,6 @@ public class ProductController {
                     orders.add(Sort.Order.desc(parts[0]));
                 }
             }
-//        }
         Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
         Page<Product> products = productService.getAllProducts(spec, pageable);
         Page<ProductDTO> productDTOs = products.map(ProductDTO::toProductDTO);
@@ -117,20 +117,18 @@ public class ProductController {
     }
 
     @PatchMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,@Valid @RequestBody Product product) {
         Product updatedProduct = productService.updateProduct(product,id);
         return new ResponseEntity<>(ProductDTO.toProductDTO(updatedProduct), HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {
         productService.deleteProduct(id);
         return new ResponseEntity<>("Success! Product removed.", HttpStatus.OK);
     }
 
-    @PostMapping("/uploadImage")
-    public ResponseEntity<String> uploadImage(@RequestParam("image") MultipartFile image) {
-        String imagePath = productService.uploadImage(image);
-        return new ResponseEntity<>(imagePath, HttpStatus.OK);
-    }
+
 }

@@ -1,5 +1,7 @@
 package com.ouss.ecom.services;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
 import com.ouss.ecom.dao.CategoryRepo;
 import com.ouss.ecom.dao.CompanyRepo;
 import com.ouss.ecom.dao.ProductRepo;
@@ -13,7 +15,9 @@ import com.ouss.ecom.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import org.springframework.data.jpa.domain.Specification;
@@ -24,16 +28,24 @@ public class ProductService {
     private final ProductRepo productRepo;
     private final CategoryRepo categoryRepo;
     private final CompanyRepo companyRepo;
-
-    public ProductService(ProductRepo productRepo, CategoryRepo categoryRepo, CompanyRepo companyRepo) {
+    private final Cloudinary cloudinary;
+    public ProductService(ProductRepo productRepo, CategoryRepo categoryRepo, CompanyRepo companyRepo, Cloudinary cloudinary) {
         this.productRepo = productRepo;
         this.categoryRepo = categoryRepo;
         this.companyRepo = companyRepo;
+        this.cloudinary = cloudinary;
     }
-    public Product createProduct(Product product) {
-        // Add your business logic here
+    public Product createProduct(Product product, MultipartFile image) {
         AppUser user = SecurityUtil.getAuthenticatedUser();
         product.setUser(user);
+        if (image != null && !image.isEmpty()) {
+            try {
+                Map uploadResult = cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
+                product.setImage((String) uploadResult.get("url"));
+            } catch (IOException e) {
+                throw new CustomException.BadRequestException("Could not store the file. Error: " + e.getMessage());
+            }
+        }
         // Fetch the Category and Company entities from the database
         Category category = categoryRepo.findByName(product.getCategory().getName());
         Company company = companyRepo.findByName(product.getCompany().getName());
@@ -47,11 +59,7 @@ public class ProductService {
     public Page<Product> getAllProducts(Specification<Product> spec, Pageable pageable) {
         return productRepo.findAll(spec, pageable);
     }
-//    public List<Product> getAllProducts() {
-//        // Add your business logic here
-//        List<Product> products = productRepo.findAll();
-//        return products;
-//    }
+
 
     public Product getSingleProduct(Long id) {
         // Add your business logic here
@@ -78,9 +86,5 @@ public class ProductService {
         productRepo.deleteById(id);
     }
 
-    public String uploadImage(MultipartFile image) {
-        // Add your business logic for handling file uploads here
-        // This is a placeholder and needs to be implemented according to your application's requirements
-        return null;
-    }
+
 }

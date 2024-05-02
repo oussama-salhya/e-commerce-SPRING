@@ -97,15 +97,24 @@ public class OrderService {
     }
 
     public Order getSingleOrder(Long id) {
-        return orderRepository.findById(id).orElseThrow(
+        Order order = orderRepository.findById(id).orElseThrow(
                 () -> new CustomException.NotFoundException("No order with id : " + id)
         );
+        AppUser user = SecurityUtil.getAuthenticatedUser();
+        if (!order.getUser().getId().equals(user.getId()) && !user.getRole().getRole().equals("ADMIN")) {
+            throw new CustomException.UnauthorizedException("You are not allowed to get this order");
+        }
+        return order;
     }
 
     public Order updateOrder(Long id, Order order) {
         Order existingOrder = orderRepository.findById(id).orElseThrow(
                 () -> new CustomException.NotFoundException("No order with id : " + id)
         );
+        AppUser user = SecurityUtil.getAuthenticatedUser();
+        if (!existingOrder.getUser().getId().equals(user.getId()) && !user.getRole().getRole().equals("ADMIN")) {
+            throw new CustomException.UnauthorizedException("You are not allowed to update this order");
+        }
         existingOrder.setPaymentIntentId(order.getPaymentIntentId());
         existingOrder.setStatus(Order.Status.PAID);
         return orderRepository.save(existingOrder);

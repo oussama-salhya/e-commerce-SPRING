@@ -50,6 +50,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
       }
     }
+    System.out.println("jwt = " + jwt);
 //    if (authHeader == null ||!authHeader.startsWith("Bearer ")) {
 //      filterChain.doFilter(request, response);
 //      return;

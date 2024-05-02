@@ -4,6 +4,7 @@ import jakarta.validation.ConstraintViolationException;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -82,10 +83,18 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
         customError.setMessage("Duplicate value entered, please choose another value");
         return new ResponseEntity<>(customError, HttpStatus.BAD_REQUEST);
     }
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<CustomError> accessDeniedException(AccessDeniedException ex) {
+        CustomError customError = new CustomError();
+        customError.setStatusCode(HttpStatus.UNAUTHORIZED.value());
+        customError.setMessage(ex.getMessage());
+        return new ResponseEntity<>(customError, HttpStatus.UNAUTHORIZED);
+    }
 
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CustomError> handleOtherExceptions(Exception ex) {
+        System.out.println(ex.toString());
         CustomError customError = new CustomError();
         customError.setStatusCode(HttpStatus.INTERNAL_SERVER_ERROR.value());
         customError.setMessage(ex.getMessage());

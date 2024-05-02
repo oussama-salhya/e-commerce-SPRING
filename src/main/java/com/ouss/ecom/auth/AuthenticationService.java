@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ouss.ecom.config.JwtService;
 import com.ouss.ecom.dao.RoleRepo;
 import com.ouss.ecom.dao.UserRepo;
+import com.ouss.ecom.dto.UserDTO;
 import com.ouss.ecom.entities.AppUser;
 import com.ouss.ecom.errors.CustomException;
 import jakarta.servlet.http.Cookie;
@@ -31,6 +32,8 @@ public class AuthenticationService {
   public  int jwtExpiration;
   @Value("${application.security.jwt.refresh-token.expiration}")
   private long refreshExpiration;
+  @Value("${spring.profiles.active}")
+  private String appEnv;
 
   private final UserRepo repository;
   private final RoleRepo roleRepositor;
@@ -50,7 +53,7 @@ public class AuthenticationService {
     return "User registered successfully";
   }
 
-  public String login(AuthenticationRequest request ,HttpServletResponse response) {
+  public UserDTO login(AuthenticationRequest request , HttpServletResponse response) {
     AppUser user = repository.findByEmail(request.getEmail())
             .orElseThrow(() -> new CustomException.UnauthorizedException("Invalid credentials"));
     if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
@@ -61,14 +64,14 @@ public class AuthenticationService {
 //    var refreshToken = jwtService.generateRefreshToken(user);
 //    revokeAllUserTokens(user);
 //    saveUserToken(user, jwtToken);
-    return "User logged in successfully";
+    return UserDTO.toUserDTO(user);
   }
 
   public Cookie createCookie(String value) {
     Cookie cookie = new Cookie("token", value);
     cookie.setPath("/");
     cookie.setHttpOnly(true);
-    cookie.setSecure(true);
+    cookie.setSecure(appEnv.equals("prod"));
     cookie.setMaxAge(jwtExpiration/1000);
     return cookie;
   }

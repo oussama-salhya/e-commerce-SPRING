@@ -46,6 +46,10 @@ public class UserService {
     }
 
     public UserDTO getSingleUser(Long id) {
+        AppUser currentUser = SecurityUtil.getAuthenticatedUser();
+        if (!currentUser.getId().equals(id) && !currentUser.getRole().getRole().equals("ADMIN")) {
+            throw new CustomException.UnauthorizedException("You are not allowed to get this user");
+        }
         AppUser user = userRepo.findById(id)
                 .orElseThrow(() -> new CustomException.NotFoundException("No user with id : " + id));
         return UserDTO.toUserDTO(user);

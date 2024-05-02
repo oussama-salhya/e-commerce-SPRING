@@ -56,7 +56,10 @@ public class ReviewService {
         Review review = reviewRepo.findById(id).orElseThrow(
                 () -> new CustomException.NotFoundException("No review with id " + id)
         );
-
+        AppUser user = SecurityUtil.getAuthenticatedUser();
+        if (!review.getUser().getId().equals(user.getId()) && !user.getRole().getRole().equals("ADMIN")) {
+            throw new CustomException.UnauthorizedException("You are not allowed to update this review");
+        }
         review.setTitle(updatedReview.getTitle());
         review.setComment(updatedReview.getComment());
         review.setRating(updatedReview.getRating());
@@ -69,11 +72,11 @@ public class ReviewService {
         Review review = reviewRepo.findById(id).orElseThrow(
                 () -> new CustomException.NotFoundException("No review with id " + id)
         );
-
-        // checkPermissions(userId, review.get().getUser());
-
+        AppUser user = SecurityUtil.getAuthenticatedUser();
+        if (!review.getUser().getId().equals(user.getId()) && !user.getRole().getRole().equals("ADMIN")) {
+            throw new CustomException.UnauthorizedException("You are not allowed to delete this review");
+        }
         productRepo.updateProductRating(review.getProduct().getId());
-
         reviewRepo.delete(review);
     }
 
