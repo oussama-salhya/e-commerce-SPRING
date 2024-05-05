@@ -2,7 +2,11 @@ package com.ouss.ecom.controllers;
 
 import com.ouss.ecom.dto.ProductDTO;
 import com.ouss.ecom.dto.ReviewDTO;
+import com.ouss.ecom.entities.Category;
+import com.ouss.ecom.entities.Company;
 import com.ouss.ecom.entities.Product;
+import com.ouss.ecom.services.CategoryService;
+import com.ouss.ecom.services.CompanyService;
 import com.ouss.ecom.services.ProductService;
 import com.ouss.ecom.services.ReviewService;
 import com.ouss.ecom.specification.ProductSpecification;
@@ -14,9 +18,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.domain.Sort;
@@ -29,11 +31,18 @@ import org.springframework.data.domain.Pageable;
 public class ProductController {
     private final ProductService productService;
     private final ReviewService reviewService;
+    private final CategoryService categoryService;
+    private final CompanyService companyService;
 
-    public ProductController(ProductService productService, ReviewService reviewService) {
+    public ProductController(ProductService productService, ReviewService reviewService, CategoryService categoryService, CompanyService companyService) {
+
         this.productService = productService;
         this.reviewService = reviewService;
+        this.categoryService = categoryService;
+        this.companyService = companyService;
     }
+
+
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
@@ -51,15 +60,20 @@ public class ProductController {
             @RequestParam(required = false) Double maxPrice,
             @RequestParam(required = false) Double minRating,
             @RequestParam(required = false) Double maxRating,
+            @RequestParam(required = false) Boolean featured,
             @RequestParam(required = false) String color,
-            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "price,desc") String sort) {
+            @RequestParam(defaultValue = "price.desc") String order) {
 
         Specification<Product> spec = Specification.where(null);
 
         if (search != null) {
             spec = spec.and(new ProductSpecification("name", "like", search));
+        }
+
+        if (featured != null) {
+            spec = spec.and(new ProductSpecification("featured", "eq", featured));
         }
 
         if (category != null) {
@@ -92,7 +106,7 @@ public class ProductController {
         List<Sort.Order> orders = new ArrayList<>();
         List<String> validProperties = Arrays.asList("name", "price", "averageRating");
 
-            String[] parts = sort.split(",");
+            String[] parts = order.split("\\.");
             if (validProperties.contains(parts[0])) {
                 if (parts.length >= 2) {
                     orders.add(parts[1].equalsIgnoreCase("asc") ? Sort.Order.asc(parts[0]) : Sort.Order.desc(parts[0]));
@@ -101,10 +115,21 @@ public class ProductController {
                     orders.add(Sort.Order.desc(parts[0]));
                 }
             }
-        Pageable pageable = PageRequest.of(page, size, Sort.by(orders));
+        Pageable pageable = PageRequest.of(page == 0 ? 0 : page-1, size, Sort.by(orders));
         Page<Product> products = productService.getAllProducts(spec, pageable);
         Page<ProductDTO> productDTOs = products.map(ProductDTO::toProductDTO);
-        return new ResponseEntity<>(productDTOs, HttpStatus.OK);
+
+        // Fetch all categories and companies
+        List<Category> categories = categoryService.getAllCategories();
+        List<Company> companies = companyService.getAllCompanies();
+
+        // Create a response object that includes products, categories, and companies
+        Map<String, Object> response = new HashMap<>();
+        response.put("products", productDTOs);
+        response.put("categories", categories);
+        response.put("companies", companies);
+
+        return new ResponseEntity<>(response, HttpStatus.OK);
     }
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getSingleProduct(@PathVariable Long id) {

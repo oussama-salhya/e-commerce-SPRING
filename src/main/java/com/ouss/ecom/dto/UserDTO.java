@@ -16,11 +16,13 @@ import java.util.stream.Collectors;
 public class UserDTO {
     private String name;
     private String email;
+    private String role;
 
     public static UserDTO toUserDTO(AppUser user) {
         return UserDTO.builder()
                 .name(user.getName())
                 .email(user.getEmail())
+                .role(user.getRole().getRole())
                 .build();
     }
 }
