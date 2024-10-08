@@ -37,8 +37,9 @@ public class Product {
     @Size(max = 1000, message = "Description can not be more than 1000 characters")
     private String description;
 
-    @Builder.Default
-    private String image = "/uploads/example.jpeg";
+//    @Builder.Default
+//    private String image = "/uploads/example.jpeg";
+    private String image ;
 
     @ManyToOne
     @NotNull(message = "Please provide a valid product category")
@@ -59,7 +60,7 @@ public class Product {
     private Boolean freeShipping = false;
 
     @NotNull(message = "Please provide inventory")
-    private Integer inventory = 15;
+    private Integer stock = 15;
 
     @Builder.Default
     private Double averageRating = 0.0;

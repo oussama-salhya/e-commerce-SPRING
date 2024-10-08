@@ -2,6 +2,7 @@ package com.ouss.ecom.services;
 
 import com.cloudinary.Cloudinary;
 import com.cloudinary.utils.ObjectUtils;
+import com.ouss.ecom.config.FileUpload;
 import com.ouss.ecom.dao.CategoryRepo;
 import com.ouss.ecom.dao.CompanyRepo;
 import com.ouss.ecom.dao.ProductRepo;
@@ -15,7 +16,9 @@ import com.ouss.ecom.utils.SecurityUtil;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -29,22 +32,44 @@ public class ProductService {
     private final CategoryRepo categoryRepo;
     private final CompanyRepo companyRepo;
     private final Cloudinary cloudinary;
-    public ProductService(ProductRepo productRepo, CategoryRepo categoryRepo, CompanyRepo companyRepo, Cloudinary cloudinary) {
+    private FileUpload fileUpload;
+    public ProductService(ProductRepo productRepo, CategoryRepo categoryRepo,
+                          CompanyRepo companyRepo, Cloudinary cloudinary, FileUpload fileUpload) {
         this.productRepo = productRepo;
         this.categoryRepo = categoryRepo;
         this.companyRepo = companyRepo;
         this.cloudinary = cloudinary;
+        this.fileUpload = fileUpload;
     }
-    public Product createProduct(Product product, MultipartFile image) {
-        AppUser user = SecurityUtil.getAuthenticatedUser();
-        product.setUser(user);
-        if (image != null && !image.isEmpty()) {
+    private String uploadProductImage(String image){
             try {
-                Map uploadResult = cloudinary.uploader().upload(image.getBytes(), ObjectUtils.emptyMap());
-                product.setImage((String) uploadResult.get("url"));
+                return fileUpload.uploadFile(image);
             } catch (IOException e) {
                 throw new CustomException.BadRequestException("Could not store the file. Error: " + e.getMessage());
             }
+    }
+//    private List<String> uploadProductImages(List<String> images){
+//        ArrayList<String> uploadedImages = new ArrayList<>();
+//        images.forEach(image ->{
+//            try {
+//                uploadedImages.add(fileUpload.uploadFile(image));
+//            } catch (IOException e) {
+//                throw new CustomException.BadRequestException("Could not store the file. Error: " + e.getMessage());
+//            }
+//        });
+//        return uploadedImages;
+//    }
+    public Product createProduct(Product product ) {
+        System.out.println(product.getId());
+        AppUser user = SecurityUtil.getAuthenticatedUser();
+        product.setUser(user);
+        System.out.println("1");
+        if (product.getImage() != null && !product.getImage().isEmpty()) {
+        System.out.println("2");
+            String uploadResult = uploadProductImage(product.getImage());
+        System.out.println("3");
+            System.out.println(uploadResult);
+            product.setImage(uploadResult);
         }
         // Fetch the Category and Company entities from the database
         Category category = categoryRepo.findByName(product.getCategory().getName());

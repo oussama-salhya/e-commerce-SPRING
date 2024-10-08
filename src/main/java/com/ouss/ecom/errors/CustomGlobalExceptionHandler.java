@@ -79,8 +79,9 @@ public class CustomGlobalExceptionHandler extends ResponseEntityExceptionHandler
     @ExceptionHandler(DataIntegrityViolationException.class)
     public ResponseEntity<CustomError> handleDataIntegrityViolationException(DataIntegrityViolationException ex) {
         CustomError customError = new CustomError();
-        customError.setStatusCode(HttpStatus.BAD_REQUEST.value());
+//        customError.setStatusCode(HttpStatus.BAD_REQUEST.value());
         customError.setMessage("Duplicate value entered, please choose another value");
+        customError.setMessage(ex.getMessage());
         return new ResponseEntity<>(customError, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(AccessDeniedException.class)

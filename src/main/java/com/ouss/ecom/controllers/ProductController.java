@@ -46,9 +46,10 @@ public class ProductController {
 
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<ProductDTO> createProduct(@Valid @RequestBody Product product, @RequestParam(required = false) MultipartFile image){
-        Product createdProduct = productService.createProduct(product,image);
-        return new ResponseEntity<>(ProductDTO.toProductDTO(createdProduct), HttpStatus.CREATED);
+    public ResponseEntity<String> createProduct(@Valid @RequestBody Product product){
+        Product createdProduct = productService.createProduct(product);
+//        return new ResponseEntity<>(ProductDTO.toProductDTO(createdProduct), HttpStatus.CREATED);
+        return new ResponseEntity<>("Success! Product created.", HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -64,7 +65,7 @@ public class ProductController {
             @RequestParam(required = false) String color,
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "5") int size,
-            @RequestParam(defaultValue = "price.desc") String order) {
+            @RequestParam(defaultValue = "createdAt.desc") String order) {
 
         Specification<Product> spec = Specification.where(null);
 

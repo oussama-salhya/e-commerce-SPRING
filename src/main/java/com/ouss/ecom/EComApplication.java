@@ -57,7 +57,7 @@ public class EComApplication {
         AppUser user = new AppUser();
         user.setName("admin");
         user.setEmail("admin@gmail.com");
-        user.setPassword(passwordEncoder.encode("admin"));
+        user.setPassword(passwordEncoder.encode("admin1232002"));
         user.setRole(roleRepo.findByRole("ADMIN"));
         userRepo.save(user);
     }

@@ -19,7 +19,6 @@ public class ReviewDTO {
     private Long productId;
 
     public static ReviewDTO toReviewDTO(Review review) {
-
         ReviewDTO reviewDTO = ReviewDTO.builder()
                 .id(review.getId())
                 .comment(review.getComment())

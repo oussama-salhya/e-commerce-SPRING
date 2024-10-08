@@ -26,7 +26,7 @@ public class ProductDTO {
     private List<String> colors;
     private Boolean featured;
     private Boolean freeShipping;
-    private Integer inventory;
+    private Integer stock;
     private Double averageRating;
     private Integer numOfReviews;
     private UserDTO user;
@@ -46,7 +46,7 @@ public class ProductDTO {
                 .colors(product.getColors())
                 .featured(product.getFeatured())
                 .freeShipping(product.getFreeShipping())
-                .inventory(product.getInventory())
+                .stock(product.getStock())
                 .averageRating(product.getAverageRating())
                 .numOfReviews(product.getNumOfReviews())
                 .user(UserDTO.toUserDTO(product.getUser()))
