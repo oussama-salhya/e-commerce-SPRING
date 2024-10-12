@@ -11,6 +11,10 @@ import com.ouss.ecom.services.ProductService;
 import com.ouss.ecom.services.ReviewService;
 import com.ouss.ecom.specification.ProductSpecification;
 import com.ouss.ecom.utils.SecurityUtil;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,7 +47,78 @@ public class ProductController {
     }
 
 
-
+    @Operation(
+            summary = "Create a product",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Product object that needs to be added to the store",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\n" +
+                                            "    \"name\": \"Sample Product\",\n" +
+                                            "    \"price\": 29.99,\n" +
+                                            "    \"description\": \"This is a sample product description.\",\n" +
+                                            "    // \"image\": \"path/to/image.jpg\",\n" +
+                                            "    \"category\": {\n" +
+                                            "        \"name\": \"office\"\n" +
+                                            "    },\n" +
+                                            "    \"company\": {\n" +
+                                            "        \"name\": \"nike\"\n" +
+                                            "    },\n" +
+                                            "    \"colors\": [\"Red\", \"Blue\", \"Green\"],\n" +
+                                            "    \"featured\": true,\n" +
+                                            "    \"freeShipping\": false,\n" +
+                                            "    \"stock\": 50,\n" +
+                                            "    \"averageRating\": 4.5,\n" +
+                                            "    \"numOfReviews\": 10,\n" +
+                                            "    \"user\": {\n" +
+                                            "        \"id\": 1\n" +
+                                            "    }\n" +
+                                            "}"
+                            )
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "201",
+                            description = "Product created",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "Success! Product created."
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "400",
+                            description = "Invalid input",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"message\": \"Invalid input\",\n" +
+                                                    "    \"status\": 400\n" +
+                                                    "}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"message\": you are not allowed to create a product\n\"," +
+                                                    "  try to acces as an admin\n" +
+                                                    "    \"status\": 403\n" +
+                                                    "}"
+                                    )
+                            )
+                    )
+            }
+    )
     @PostMapping
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> createProduct(@Valid @RequestBody Product product){
@@ -52,6 +127,100 @@ public class ProductController {
         return new ResponseEntity<>("Success! Product created.", HttpStatus.CREATED);
     }
 
+    @Operation(
+            summary = "Get all products",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "List of products",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"companies\": [\n" +
+                                                    "        {\n" +
+                                                    "            \"id\": 1,\n" +
+                                                    "            \"name\": \"ikea\"\n" +
+                                                    "        },\n" +
+                                                    "        {\n" +
+                                                    "            \"id\": 2,\n" +
+                                                    "            \"name\": \"nike\"\n" +
+                                                    "        }\n" +
+                                                    "    ],\n" +
+                                                    "    \"categories\": [\n" +
+                                                    "        {\n" +
+                                                    "            \"id\": 1,\n" +
+                                                    "            \"name\": \"office\"\n" +
+                                                    "        },\n" +
+                                                    "        {\n" +
+                                                    "            \"id\": 2,\n" +
+                                                    "            \"name\": \"sport\"\n" +
+                                                    "        }\n" +
+                                                    "    ],\n" +
+                                                    "    \"products\": {\n" +
+                                                    "        \"content\": [\n" +
+                                                    "            {\n" +
+                                                    "                \"id\": 1,\n" +
+                                                    "                \"name\": \"product\",\n" +
+                                                    "                \"price\": 907.78,\n" +
+                                                    "                \"description\": \"omnis\",\n" +
+                                                    "                \"image\": null,\n" +
+                                                    "                \"category\": {\n" +
+                                                    "                    \"id\": 1,\n" +
+                                                    "                    \"name\": \"office\"\n" +
+                                                    "                },\n" +
+                                                    "                \"company\": {\n" +
+                                                    "                    \"id\": 1,\n" +
+                                                    "                    \"name\": \"ikea\"\n" +
+                                                    "                },\n" +
+                                                    "                \"colors\": [\n" +
+                                                    "                    \"red\"\n" +
+                                                    "                ],\n" +
+                                                    "                \"featured\": false,\n" +
+                                                    "                \"freeShipping\": false,\n" +
+                                                    "                \"stock\": 238,\n" +
+                                                    "                \"averageRating\": 0.0,\n" +
+                                                    "                \"numOfReviews\": 0,\n" +
+                                                    "                \"user\": {\n" +
+                                                    "                    \"name\": \"admin\",\n" +
+                                                    "                    \"email\": \"admin@gmail.com\",\n" +
+                                                    "                    \"role\": \"ADMIN\"\n" +
+                                                    "                },\n" +
+                                                    "                \"reviews\": null\n" +
+                                                    "            }\n" +
+                                                    "        ],\n" +
+                                                    "        \"pageable\": {\n" +
+                                                    "            \"pageNumber\": 0,\n" +
+                                                    "            \"pageSize\": 5,\n" +
+                                                    "            \"sort\": {\n" +
+                                                    "                \"empty\": false,\n" +
+                                                    "                \"sorted\": true,\n" +
+                                                    "                \"unsorted\": false\n" +
+                                                    "            },\n" +
+                                                    "            \"offset\": 0,\n" +
+                                                    "            \"unpaged\": false,\n" +
+                                                    "            \"paged\": true\n" +
+                                                    "        },\n" +
+                                                    "        \"last\": true,\n" +
+                                                    "        \"totalPages\": 1,\n" +
+                                                    "        \"totalElements\": 1,\n" +
+                                                    "        \"size\": 5,\n" +
+                                                    "        \"number\": 0,\n" +
+                                                    "        \"sort\": {\n" +
+                                                    "            \"empty\": false,\n" +
+                                                    "            \"sorted\": true,\n" +
+                                                    "            \"unsorted\": false\n" +
+                                                    "        },\n" +
+                                                    "        \"first\": true,\n" +
+                                                    "        \"numberOfElements\": 1,\n" +
+                                                    "        \"empty\": false\n" +
+                                                    "    }\n" +
+                                                    "}"
+                                    )
+                            )
+                    )
+            }
+    )
     @GetMapping
     public ResponseEntity<?> getAllProducts(
             @RequestParam(required = false) String search,
@@ -132,16 +301,139 @@ public class ProductController {
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
+
+
+    @Operation(
+            summary = "Get a single product",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Product found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ProductDTO.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"message\": \"Product not found\",\n" +
+                                                    "    \"status\": 404\n" +
+                                                    "}"
+                                    )
+                            )
+                    )
+            }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> getSingleProduct(@PathVariable Long id) {
         Product product = productService.getSingleProduct(id);
         return new ResponseEntity<>(ProductDTO.toProductDTO(product), HttpStatus.OK);
     }
+
+   @Operation(
+            summary = "Get all reviews of a product",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "List of reviews",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "[\n" +
+                                                    "    {\n" +
+                                                    "        \"id\": 1,\n" +
+                                                    "        \"comment\": \"I really enjoyed using this product. Highly recommended!\",\n" +
+                                                    "        \"rating\": 1,\n" +
+                                                    "        \"user\": {\n" +
+                                                    "            \"name\": \"karim\",\n" +
+                                                    "            \"email\": \"karim@gmail.com\",\n" +
+                                                    "            \"role\": \"USER\"\n" +
+                                                    "        },\n" +
+                                                    "        \"productId\": 1\n" +
+                                                    "    }\n" +
+                                                    "]"
+                                    )
+                            )
+                    )
+            }
+   )
     @GetMapping("/{id}/reviews")
     public ResponseEntity<List<ReviewDTO>> getSingleProductReviews(@PathVariable Long id) {
         return ResponseEntity.ok(reviewService.getSingleProductReviews(id));
     }
 
+    @Operation(
+            summary = "Update a product",
+            requestBody = @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Product object that needs to be updated",
+                    required = true,
+                    content = @Content(
+                            mediaType = "application/json",
+                            schema = @Schema(
+                                    example = "{\n" +
+                                            "        \"id\": 1,\n" +
+                                            "        \"name\": \"new Updated Product\",\n" +
+                                            "        \"price\": 99.99,\n" +
+                                            "        \"description\": \"This is a test product\",\n" +
+                                            "        \"image\": \"/uploads/example.jpeg\",\n" +
+                                            "        \"category\": {\n" +
+                                            "            \"name\": \"office\"\n" +
+                                            "        },\n" +
+                                            "        \"company\": {\n" +
+                                            "            \"name\": \"ikea\"\n" +
+                                            "        },\n" +
+                                            "        \"colors\": [\n" +
+                                            "            \"Red\",\n" +
+                                            "            \"Blue\"\n" +
+                                            "        ],\n" +
+                                            "        \"featured\": false,\n" +
+                                            "        \"freeShipping\": false,\n" +
+                                            "        \"inventory\": 10,\n" +
+                                            "        \"averageRating\": 0.0,\n" +
+                                            "        \"numOfReviews\": 0,\n" +
+                                            "        \"user\": {\n" +
+                                            "            \"id\": 1\n" +
+                                            "        },\n" +
+                                            "        \"reviews\": [],\n" +
+                                            "           \n" +
+                                            "    \"stock\": 50\n" +
+                                            "    }"
+                            )
+                    )
+            ),
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Product updated",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            implementation = ProductDTO.class
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"message\": \"Product not found\",\n" +
+                                                    "    \"status\": 404\n" +
+                                                    "}"
+                                    )
+                            )
+                    )
+            }
+    )
     @PatchMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ProductDTO> updateProduct(@PathVariable Long id,@Valid @RequestBody Product product) {
@@ -149,6 +441,35 @@ public class ProductController {
         return new ResponseEntity<>(ProductDTO.toProductDTO(updatedProduct), HttpStatus.OK);
     }
 
+
+    @Operation(
+            summary = "Delete a product",
+            responses = {
+                    @ApiResponse(
+                            responseCode = "200",
+                            description = "Product removed",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "Success! Product removed."
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "404",
+                            description = "Product not found",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"message\": \"Product not found\",\n" +
+                                                    "    \"status\": 404\n" +
+                                                    "}"
+                                    )
+                            )
+                    )
+            }
+    )
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<String> deleteProduct(@PathVariable Long id) {

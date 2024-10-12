@@ -75,6 +75,13 @@ public class ProductService {
         Category category = categoryRepo.findByName(product.getCategory().getName());
         Company company = companyRepo.findByName(product.getCompany().getName());
 
+        // see if company and category are null
+        if (category == null) {
+            throw new CustomException.NotFoundException("No category with name : " + product.getCategory().getName());
+        }
+        if (company == null) {
+            throw new CustomException.NotFoundException("No company with name : " + product.getCompany().getName());
+        }
         // Set the fetched entities to the product
         product.setCategory(category);
         product.setCompany(company);
@@ -100,6 +107,20 @@ public class ProductService {
         if (!existingProduct.isPresent()) {
             throw new CustomException.NotFoundException("No product with id : " + product.getId());
         }
+        // Fetch the Category and Company entities from the database
+        Category category = categoryRepo.findByName(product.getCategory().getName());
+        Company company = companyRepo.findByName(product.getCompany().getName());
+
+        // see if company and category are null
+        if (category == null) {
+            throw new CustomException.NotFoundException("No category with name : " + product.getCategory().getName());
+        }
+        if (company == null) {
+            throw new CustomException.NotFoundException("No company with name : " + product.getCompany().getName());
+        }
+        // Set the fetched entities to the product
+        product.setCategory(category);
+        product.setCompany(company);
         return productRepo.save(product);
     }
 
