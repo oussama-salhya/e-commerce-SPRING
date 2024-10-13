@@ -7,5 +7,5 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface CompanyRepo extends JpaRepository<Company, Long> {
 
 
-    Company findByName(String ikea);
+    Company findByName(String name);
 }
