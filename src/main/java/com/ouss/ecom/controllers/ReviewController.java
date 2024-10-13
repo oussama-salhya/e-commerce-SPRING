@@ -33,7 +33,7 @@ public class ReviewController {
                                     mediaType = "application/json",
                                     schema = @Schema(
                                             example = "{\n" +
-                                                    "    \"rating\": 99.99,\n" +
+                                                    "    \"rating\": 4,\n" +
                                                     "    \"title\": \"Great product\",\n" +
                                                     "    \"comment\": \"I really enjoyed using this product. Highly recommended!\"\n" +
                                                     "}"
