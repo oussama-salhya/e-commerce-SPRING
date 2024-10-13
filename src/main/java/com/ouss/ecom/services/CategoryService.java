@@ -16,6 +16,9 @@ public class CategoryService {
     private CategoryRepo categoryRepository;
 
     public Category createCategory(Category category) {
+        if (categoryRepository.findByName(category.getName()) != null) {
+            throw new CustomException.BadRequestException("Category already exists");
+        }
         return categoryRepository.save(category);
     }
 

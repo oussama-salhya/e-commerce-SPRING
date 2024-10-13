@@ -19,7 +19,7 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "orders")
+@Table(name = "ecom-orders")
 public class Order {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

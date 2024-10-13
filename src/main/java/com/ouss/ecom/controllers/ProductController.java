@@ -431,6 +431,19 @@ public class ProductController {
                                                     "}"
                                     )
                             )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"message\": try to acces as an admin\n" +
+                                                    "    \"status\": 403\n" +
+                                                    "}"
+                                    )
+                            )
                     )
             }
     )
@@ -464,6 +477,19 @@ public class ProductController {
                                             example = "{\n" +
                                                     "    \"message\": \"Product not found\",\n" +
                                                     "    \"status\": 404\n" +
+                                                    "}"
+                                    )
+                            )
+                    ),
+                    @ApiResponse(
+                            responseCode = "403",
+                            description = "forbidden",
+                            content = @Content(
+                                    mediaType = "application/json",
+                                    schema = @Schema(
+                                            example = "{\n" +
+                                                    "    \"message\": try to acces as an admin\n" +
+                                                    "    \"status\": 403\n" +
                                                     "}"
                                     )
                             )

@@ -42,15 +42,15 @@ public class AuthenticationService {
   private final JwtService jwtService;
   private final AuthenticationManager authenticationManager;
 
-  public String register(AppUser user) {
+  public UserDTO register(AppUser user) {
     var existingUser = repository.findByEmail(user.getEmail());
     if (existingUser.isPresent()) {
       throw new CustomException.BadRequestException("Email already exists");
     }
     user.setPassword(passwordEncoder.encode(user.getPassword()));
     if (user.getRole() == null) user.setRole(roleRepositor.findByRole("USER"));
-    repository.save(user);
-    return "User registered successfully";
+
+    return UserDTO.toUserDTO(repository.save(user));
   }
 
   public UserDTO login(AuthenticationRequest request , HttpServletResponse response) {

@@ -6,6 +6,7 @@ import lombok.Data;
 
 @Data
 @Entity
+@Table(name = "ecom-categories")
 public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

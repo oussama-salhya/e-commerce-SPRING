@@ -20,7 +20,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "products")
+@Table(name = "ecom-products")
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

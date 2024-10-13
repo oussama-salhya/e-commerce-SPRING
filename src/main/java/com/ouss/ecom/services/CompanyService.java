@@ -16,6 +16,9 @@ public class CompanyService {
     private CompanyRepo companyRepository;
 
     public Company createCompany(Company company) {
+        if (companyRepository.findByName(company.getName()) != null) {
+            throw new CustomException.BadRequestException("Company already exists");
+        }
         return companyRepository.save(company);
     }
 

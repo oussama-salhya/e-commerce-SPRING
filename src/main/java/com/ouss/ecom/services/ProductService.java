@@ -64,12 +64,15 @@ public class ProductService {
         AppUser user = SecurityUtil.getAuthenticatedUser();
         product.setUser(user);
         System.out.println("1");
+
         if (product.getImage() != null && !product.getImage().isEmpty()) {
-        System.out.println("2");
-            String uploadResult = uploadProductImage(product.getImage());
-        System.out.println("3");
-            System.out.println(uploadResult);
-            product.setImage(uploadResult);
+            if (product.getImage().length() > 100) {
+                System.out.println("2");
+                String uploadResult = uploadProductImage(product.getImage());
+                System.out.println("3");
+                System.out.println(uploadResult);
+                product.setImage(uploadResult);
+            }
         }
         // Fetch the Category and Company entities from the database
         Category category = categoryRepo.findByName(product.getCategory().getName());

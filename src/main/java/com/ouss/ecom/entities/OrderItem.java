@@ -1,5 +1,6 @@
 package com.ouss.ecom.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -14,7 +15,7 @@ import lombok.RequiredArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "order_items")
+@Table(name = "ecom-order-items")
 public class OrderItem {
     @EmbeddedId
     private OrderItemKey id;
@@ -22,7 +23,7 @@ public class OrderItem {
     @NotBlank(message = "Please provide name")
     private String name;
 
-    @NotBlank(message = "Please provide image")
+//    @NotBlank(message = "Please provide image")
     private String image;
 
     @NotNull(message = "Please provide price")
@@ -36,8 +37,8 @@ public class OrderItem {
     @JoinColumn(name = "product_id", nullable = false)
     private Product product;
 
-    @MapsId("orderId")
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
+    @JoinColumn(name = "order_id", nullable = false, insertable = false, updatable = false)
+    @JsonIgnore
     private Order order;
 }

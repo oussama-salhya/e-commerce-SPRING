@@ -71,7 +71,7 @@ public class OrderService {
                 orderItem.setOrder(savedOrder);
 
                 orderItem = orderItemRepo.save(orderItem);
-                savedOrder.getOrderItems().add(orderItem);
+//                savedOrder.getOrderItems().add(orderItem);
                 subtotal += item.getAmount() * dbProduct.getPrice();
             }
             // Assuming fakeStripeAPI is another service method

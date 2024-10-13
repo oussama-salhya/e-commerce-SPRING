@@ -17,6 +17,8 @@ public class OrderDTO {
     private Double shippingFee;
     private Status status;
     private List<OrderItemDTO> orderItems;
+    private String clientSecret;
+    private String paymentIntentId;
 
     public static OrderDTO fromOrder(Order order) {
         OrderDTO dto = new OrderDTO();
@@ -25,6 +27,9 @@ public class OrderDTO {
         dto.setOrderItems(order.getOrderItems().stream().map(OrderItemDTO::fromOrderItem).collect(Collectors.toList()));
         dto.setUser(UserDTO.toUserDTO(order.getUser()));
         dto.setStatus(order.getStatus());
+        dto.setClientSecret(order.getClientSecret());
+        dto.setPaymentIntentId(order.getPaymentIntentId());
+
         return dto;
     }
 
