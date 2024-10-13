@@ -1,6 +1,7 @@
 package com.ouss.ecom;
 
 import com.ouss.ecom.auth.AuthenticationService;
+import com.ouss.ecom.config.RateLimitingFilter;
 import com.ouss.ecom.dao.CategoryRepo;
 import com.ouss.ecom.dao.CompanyRepo;
 import com.ouss.ecom.dao.RoleRepo;
@@ -12,6 +13,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.web.servlet.FilterRegistrationBean;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.util.Arrays;
@@ -36,6 +39,14 @@ public class EComApplication {
     private CompanyRepo companyRepo;
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+//    @Bean
+//    public FilterRegistrationBean<RateLimitingFilter> rateLimitingFilter() {
+//        FilterRegistrationBean<RateLimitingFilter> registrationBean = new FilterRegistrationBean<>();
+//        registrationBean.setFilter(new RateLimitingFilter());
+//        registrationBean.addUrlPatterns("/api/*"); // Register filter for API endpoints
+//        return registrationBean;
+//    }
     @PostConstruct
     public void init(){
 
