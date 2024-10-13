@@ -8,7 +8,7 @@ import io.swagger.v3.oas.annotations.info.Info;
         info = @Info(
                 contact = @Contact(
                         name = "Oussama SALHYA",
-                        url = "https://oussama-salhya.vercel.app/",
+                        url = "https://www.oussama-salhya.me/",
                         email = "oussamasalhya@gmail.com"
                 ),
                 title = "OpenAPI E-commerce ",
@@ -37,7 +37,10 @@ import io.swagger.v3.oas.annotations.info.Info;
                         o\tNote that USERS cannot perform admin-specific actions such as creating, updating, or deleting products. These actions are restricted to administrators. \n \n
                         4.\tIntegrate with Your Platform: Utilize API calls to enhance your application’s functionality, enabling users to engage with your storefront seamlessly. \n \n
                         3.\tMonitor and Communicate: Utilize available endpoints to provide users with updates on their orders and account activities. \n \n
-
+                        - you can use this API to build your own e-commerce platform, or integrate it with an existing platform to enhance user experience and streamline shopping activities. by using this link \n 
+                        https://comfy-shop-7p8v.onrender.com/api/v1/ as a base URL for the API. \n
+                        for example, to get all products you can use this link https://comfy-shop-7p8v.onrender.com/api/v1/products but you need to be already register and login by using this endpoint (with post method) :\n
+                        https://comfy-shop-7p8v.onrender.com/api/v1/auth/register or https://comfy-shop-7p8v.onrender.com/api/v1/auth/login \n \n
                         """
         )
 )
